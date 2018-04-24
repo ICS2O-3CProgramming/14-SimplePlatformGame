@@ -80,10 +80,8 @@ local questionsAnswered = 0
  
 -- When right arrow is touched, move character right
 local function right (touch)
-    --if (character ~= nil) then
-        motionx = SPEED
-        character.xScale = 1
-    --end
+    motionx = SPEED
+    character.xScale = 1
 end
 
 -- When up arrow is touched, add vertical so it can jump
@@ -95,9 +93,7 @@ end
 
 -- Move character horizontally
 local function movePlayer (event)
-    --if (character ~= nil) then
-        character.x = character.x + motionx
-    --end
+    character.x = character.x + motionx
 end
  
 -- Stop character movement when no arrow is pushed
