@@ -49,7 +49,7 @@ local spikes3platform
 
 local torchesAndSign
 local door
-local door2
+local door
 local character
 
 local heart1
@@ -65,36 +65,21 @@ local LINEAR_VELOCITY = -100
 local GRAVITY = 7
 
 local leftW 
-local rightW
 local topW
 local floor
 
 local YouLose
 local YouWin
 
+local ball1
 local ball2
-local ball3
 local theBall
 
 local questionsAnswered = 0
 
-local popSound = audio.loadSound( "Sounds/Pop.mp3")
-local popSoundChannel
-
-local youWinSound = audio.loadSound("Sounds/Cheer.m4a")
-local youWinSoundChannel
-
 -----------------------------------------------------------------------------------------
 -- LOCAL SCENE FUNCTIONS
------------------------------------------------------------------------------------------
-
--- When left arrow is touched, move character left
-local function left (touch)
-        motionx = -SPEED
-        character.xScale = -1
-
-end
- 
+----------------------------------------------------------------------------------------- 
  
 -- When right arrow is touched, move character right
 local function right (touch)
@@ -172,8 +157,8 @@ local function ReplaceCharacter()
 end
 
 local function MakeSoccerBallsVisible()
+    ball1.isVisible = true
     ball2.isVisible = true
-    ball3.isVisible = true
 end
 
 local function MakeHeartsVisible()
@@ -183,14 +168,6 @@ end
 
 local function YouLoseTransition()
     composer.gotoScene( "you_lose" )
-end
-
-local function Level2Transition( )
-    composer.gotoScene( "you_win" )
-    audio.stop ( mmMusicChannel)
-
-    --play you win audio
-    youWinSoundChannel = audio.play(youWinSound)
 end
 
 local function onCollision( self, event )
@@ -236,8 +213,8 @@ local function onCollision( self, event )
             end
         end
 
-        if  (event.target.myName == "ball2") or
-            (event.target.myName == "ball3") then
+        if  (event.target.myName == "ball1") or
+            (event.target.myName == "ball2") then
 
             -- get the ball that the user hit
             theBall = event.target
@@ -255,10 +232,10 @@ local function onCollision( self, event )
             questionsAnswered = questionsAnswered + 1
         end
 
-        if (event.target.myName == "door2") then
+        if (event.target.myName == "door") then
             --check to see if the user has answered 5 questions
-            if questionsAnswered == 5 then
-                Level2Transition( )
+            if (questionsAnswered == 3) then
+                -- after getting 3 questions right, go to the you win screen
             end
         end        
 
@@ -277,13 +254,13 @@ local function AddCollisionListeners()
     spikes3:addEventListener( "collision" )
 
     -- if character collides with ball, onCollision will be called    
+    ball1.collision = onCollision
+    ball1:addEventListener( "collision" )
     ball2.collision = onCollision
     ball2:addEventListener( "collision" )
-    ball3.collision = onCollision
-    ball3:addEventListener( "collision" )
 
-    door2.collision = onCollision
-    door2:addEventListener( "collision" )
+    door.collision = onCollision
+    door:addEventListener( "collision" )
 end
 
 local function RemoveCollisionListeners()
@@ -292,10 +269,10 @@ local function RemoveCollisionListeners()
     spikes2:removeEventListener( "collision" )
     spikes3:removeEventListener( "collision" )
 
+    ball1:removeEventListener( "collision" )
     ball2:removeEventListener( "collision" )
-    ball3:removeEventListener( "collision" )
 
-    door2:removeEventListener( "collision")
+    door:removeEventListener( "collision")
 
 end
 
@@ -317,14 +294,13 @@ local function AddPhysicsBodies()
     physics.addBody( spikes3platform, "static", { density=1.0, friction=0.3, bounce=0.2 } )
 
     physics.addBody(leftW, "static", {density=1, friction=0.3, bounce=0.2} )
-    physics.addBody(rightW, "static", {density=1, friction=0.3, bounce=0.2} )
     physics.addBody(topW, "static", {density=1, friction=0.3, bounce=0.2} )
     physics.addBody(floor, "static", {density=1, friction=0.3, bounce=0.2} )
 
+    physics.addBody(ball1, "static",  {density=0, friction=0, bounce=0} )
     physics.addBody(ball2, "static",  {density=0, friction=0, bounce=0} )
-    physics.addBody(ball3, "static",  {density=0, friction=0, bounce=0} )
 
-    physics.addBody(door2, "static", {density=1, friction=0.3, bounce=0.2})
+    physics.addBody(door, "static", {density=1, friction=0.3, bounce=0.2})
 
 end
 
@@ -343,7 +319,6 @@ local function RemovePhysicsBodies()
     physics.removeBody(spikes3platform)
 
     physics.removeBody(leftW)
-    physics.removeBody(rightW)
     physics.removeBody(topW)
     physics.removeBody(floor)
  
@@ -461,17 +436,13 @@ function scene:create( event )
     sceneGroup:insert( torchesAndSign )
 
     -- Insert the Door
-    door = display.newImageRect("Images/Level-1Door.png", display.contentWidth, display.contentHeight)
-    door.x = display.contentCenterX
-    door.y = display.contentCenterY
+    door = display.newImage("Images/Level-1Door.png", 200, 200)
+    door.x = display.contentWidth/5 
+    door.y = display.contentHeight*6.1/7
+    door.myName = "door"
 
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( door )
-
-    -- door 2
-    door2 = display.newRect(155, 650, 200, 200)
-    door2.isVisible = false
-    door2.myName = "door2"
 
     -- Insert the Hearts
     heart1 = display.newImageRect("Images/heart.png", 80, 80)
@@ -529,7 +500,7 @@ function scene:create( event )
 
     floor = display.newImageRect("Images/Level-1Floor.png", 1024, 100)
     floor.x = display.contentCenterX
-    floor.y = display.contentHeight * 1.05
+    floor.y = display.contentHeight * 1.06
     
 
     -- Insert objects into the scene group in order to ONLY be associated with this scene
@@ -553,24 +524,24 @@ function scene:create( event )
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( YouWin )
 
+    --ball1
+    ball1 = display.newImageRect ("Images/SoccerBall.png", 70, 70)
+    ball1.x = 610
+    ball1.y = 480
+    ball1.myName = "ball1"
+
+    -- Insert objects into the scene group in order to ONLY be associated with this scene
+    sceneGroup:insert( ball1 )
+
+
     --ball2
     ball2 = display.newImageRect ("Images/SoccerBall.png", 70, 70)
-    ball2.x = 610
-    ball2.y = 480
+    ball2.x = 490
+    ball2.y = 170
     ball2.myName = "ball2"
 
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( ball2 )
-
-
-    --ball3
-    ball3 = display.newImageRect ("Images/SoccerBall.png", 70, 70)
-    ball3.x = 490
-    ball3.y = 170
-    ball3.myName = "ball3"
-
-    -- Insert objects into the scene group in order to ONLY be associated with this scene
-    sceneGroup:insert( ball3 )
 
 end --function scene:create( event )
 
