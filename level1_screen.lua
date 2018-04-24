@@ -68,9 +68,6 @@ local leftW
 local topW
 local floor
 
-local YouLose
-local YouWin
-
 local ball1
 local ball2
 local theBall
@@ -505,24 +502,6 @@ function scene:create( event )
 
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( floor )
-
-    -- You Lose screen
-    YouLose = display.newImageRect ("Images/YouLose.png", display.contentWidth, display.contentHeight)
-    YouLose.isVisible = false
-    YouLose.x = display.contentWidth / 2 
-    YouLose.y = display.contentHeight / 2
-
-    -- Insert objects into the scene group in order to ONLY be associated with this scene
-    sceneGroup:insert( YouLose )
-
-    -- You Win screen
-    YouWin = display.newImageRect ("Images/YouWin.png", display.contentWidth, display.contentHeight)
-    YouWin.isVisible = false
-    YouWin.x = display.contentWidth / 2 
-    YouWin.y = display.contentHeight / 2
-
-    -- Insert objects into the scene group in order to ONLY be associated with this scene
-    sceneGroup:insert( YouWin )
 
     --ball1
     ball1 = display.newImageRect ("Images/SoccerBall.png", 70, 70)
