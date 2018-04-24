@@ -237,7 +237,6 @@ end
 
 
 local function AddCollisionListeners()
-    print ("***Called AddCollisionListeners")
     -- if character collides with ball, onCollision will be called
     spikes1.collision = onCollision
     spikes1:addEventListener( "collision" )
@@ -257,7 +256,6 @@ local function AddCollisionListeners()
 end
 
 local function RemoveCollisionListeners()
-    print ("***Called RemoveCollisionListeners")
     spikes1:removeEventListener( "collision" )
     spikes2:removeEventListener( "collision" )
     spikes3:removeEventListener( "collision" )
@@ -270,8 +268,6 @@ local function RemoveCollisionListeners()
 end
 
 local function AddPhysicsBodies()
-    
-
     --add to the physics engine
     physics.addBody( platform1, "static", { density=1.0, friction=0.3, bounce=0.2 } )
     physics.addBody( platform2, "static", { density=1.0, friction=0.3, bounce=0.2 } )
@@ -328,8 +324,8 @@ function ResumeGame()
     
     if (questionsAnswered > 0) then
         if (theBall ~= nil) and (theBall.isBodyActive == true) then
-                physics.removeBody(theBall)
-                theBall.isVisible = false
+            physics.removeBody(theBall)
+            theBall.isVisible = false
         end
     end
 
@@ -345,8 +341,6 @@ function scene:create( event )
     -- Creating a group that associates objects with the scene
     local sceneGroup = self.view
 
-    -----------------------------------------------------------------------------------------
-
     -- Insert the background image
     bkg_image = display.newImageRect("Images/Level-1BKG.png", display.contentWidth, display.contentHeight)
     bkg_image.x = display.contentWidth / 2 
@@ -354,7 +348,6 @@ function scene:create( event )
 
     -- Insert background image into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( bkg_image )    
-
     
     -- Insert the platforms
     platform1 = display.newImageRect("Images/Level-1Platform1.png", 250, 50)
@@ -490,12 +483,10 @@ function scene:create( event )
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( topW )
 
-
     floor = display.newImageRect("Images/Level-1Floor.png", 1024, 100)
     floor.x = display.contentCenterX
     floor.y = display.contentHeight * 1.06
     
-
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( floor )
 
@@ -507,7 +498,6 @@ function scene:create( event )
 
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( ball1 )
-
 
     --ball2
     ball2 = display.newImageRect ("Images/SoccerBall.png", 70, 70)
@@ -561,9 +551,6 @@ function scene:show( event )
 
         -- add collision listeners to objects
         AddCollisionListeners()
-
-        -- add arrow event listeners for buttons
-        --AddArrowEventListeners()
 
         -- create the character, add physics bodies and runtime listeners
         ReplaceCharacter()
